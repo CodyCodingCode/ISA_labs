@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Note Reader</title>
+</head>
+
+<body>
+  <h1>Note Reader</h1>
+  <div>
+    <h2>Notes</h2>
+    <ul id="noteList"></ul>
+  </div>
+  <button onclick="switchPage('index.html')">Index</button>
+  <button onclick="switchPage('writer.html')">Writer</button>
+
+  <script>
+    function switchPage(page) {
+      window.location.href = page;
+    }
+    // Function to get notes from local storage
+    function getNotes() {
+      const storedNotes = localStorage.getItem('notes');
+      return storedNotes ? JSON.parse(storedNotes) : [];
+    }
+
+    // Function to display notes
+    function displayNotes() {
+      const notes = getNotes();
+      const noteList = document.getElementById('noteList');
+      noteList.innerHTML = '';
+
+      notes.forEach((note, index) => {
+        const listItem = document.createElement('li');
+        listItem.textContent = `${index + 1}. ${note.text}`;
+        noteList.appendChild(listItem);
+      });
+    }
+
+    // Load and display notes on page load
+    displayNotes();
+  </script>
+</body>
+
+</html>
