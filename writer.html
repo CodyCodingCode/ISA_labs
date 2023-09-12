@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Note Writer</title>
+</head>
+
+<body>
+  <h1>Note Writer</h1>
+
+  <div>
+    <p id="lastSaved"></p>
+  </div>
+
+  <div class="note-container">
+    <div class="save-time" id="save-time">Last Saved: Never</div>
+  </div>
+  <button id="add-button">Add Note</button>
+
+  <button onclick="switchPage('index.html')">Index</button>
+  <button onclick="switchPage('reader.html')">Reader</button>
+
+  <script>
+    function updateSaveTime() {
+      const saveTimeElement = document.getElementById('save-time');
+      const now = new Date();
+      saveTimeElement.textContent = `Last Saved: ${now.toLocaleString()}`;
+    }
+
+    function saveNotesToLocalStorage() {
+      const notes = [];
+      const noteElements = document.querySelectorAll('.note-text');
+      noteElements.forEach((noteElement) => {
+        notes.push(noteElement.value);
+      });
+      localStorage.setItem('notes', JSON.stringify(notes));
+      updateSaveTime();
+    }
+
+    function loadNotesFromLocalStorage() {
+      const savedNotes = localStorage.getItem('notes');
+      if (savedNotes) {
+        const notes = JSON.parse(savedNotes);
+        notes.forEach((note) => {
+          createNoteElement(note);
+        });
+      }
+    }
+
+    function createNoteElement(text = '') {
+      const noteContainer = document.querySelector('.note-container');
+      const noteDiv = document.createElement('div');
+      noteDiv.classList.add('note');
+
+      const noteText = document.createElement('textarea');
+      noteText.classList.add('note-text');
+      noteText.value = text;
+
+      const removeButton = document.createElement('button');
+      removeButton.classList.add('remove-button');
+      removeButton.textContent = 'Remove';
+      removeButton.addEventListener('click', () => {
+        noteContainer.removeChild(noteDiv);
+        saveNotesToLocalStorage();
+      });
+
+      noteDiv.appendChild(noteText);
+      noteDiv.appendChild(removeButton);
+      noteContainer.appendChild(noteDiv);
+    }
+
+    loadNotesFromLocalStorage();
+
+    setInterval(saveNotesToLocalStorage, 2000);
+
+    const addButton = document.getElementById('add-button');
+    addButton.addEventListener('click', () => {
+      createNoteElement();
+    });
+
+    function switchPage(page) {
+      window.location.href = page;
+    }
+  </script>
+
+</body>
+
+</html>
+
+// only save if there is a change, not every 2 seconds.
